@@ -10,11 +10,26 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-import random
-import string
+from sklearn.preprocessing import LabelEncoder
 
 # Load and prepare your data here
-data = pd.read_csv('breast_cancer_data.csv')  # Modify path as necessary
+data = pd.read_csv('breast_cancer_data.csv')  # Ensure the file is in the correct path
+
+# Data Cleaning
+# Check for missing values
+if data.isnull().values.any():
+    data.fillna(data.mean(), inplace=True)
+
+# Ensure all data is finite
+data = data.replace([float('inf'), float('-inf')], float('nan'))
+data.dropna(inplace=True)
+
+# Check if all features are numeric
+for column in data.columns:
+    if data[column].dtype == 'object':
+        le = LabelEncoder()
+        data[column] = le.fit_transform(data[column])
+
 X = data.iloc[:, 2:]  # Assuming feature columns start from index 2
 y = data.iloc[:, 1]   # Assuming label column is at index 1
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
@@ -80,8 +95,8 @@ def login():
 
     if submit:
         if phone and name:
-          st.session_state.logged_in = True
-          st.success("Login Successful")
+            st.session_state.logged_in = True
+            st.success("Login Successful")
         else:
             st.error("Please fill all fields")
 
@@ -125,8 +140,6 @@ def model_comparison():
     plt.ylabel('Accuracy')
     plt.title('Comparison of Model Accuracies')
     st.pyplot(plt)
-
-from sklearn.preprocessing import LabelEncoder
 
 def train_own_model():
     st.title("Model Analysis / Tester")
@@ -179,7 +192,7 @@ def train_own_model():
             st.write("DTR MSE:", mean_squared_error(y_test, y_pred_dtr))
 
             st.write("The mean squared error (MSE) is a common way to measure the quality of predictions made by a machine learning model.\nA lower MSE generally indicates a better fit between the model's predictions and the actual outcomes.")
-            st.write("Here's a general rule of thumb for interpreting\n\t\tMSE: 0.0 - 0.1: Excellent\n\t\t0.1 - 0.3: Good\n\t\t0.3 - 0.5: Acceptablen\n\t\tAbove 0.5: Poor")
+            st.write("Here's a general rule of thumb for interpreting\n\t\tMSE: 0.0 - 0.1: Excellent\n\t\t0.1 - 0.3: Good\n\t\t0.3 - 0.5: Acceptable\n\t\tAbove 0.5: Poor")
 
             if mean_squared_error(y_test, y_pred_svc) == mean_squared_error(y_test, y_pred_dtr):
                 st.write("Both are Best Choice...")
