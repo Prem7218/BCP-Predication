@@ -1,5 +1,3 @@
-pip install -r requirements.txt
-pip install breast_cancer_data.csv
 import streamlit as st
 import requests
 import pandas as pd
