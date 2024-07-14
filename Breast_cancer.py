@@ -14,7 +14,7 @@ import random
 import string
 
 # Load and prepare your data here
-data = pd.read_csv('https://fastupload.io/540c354241045844')  # Modify path as necessary
+data = pd.read_csv('breast_cancer_data.csv')  # Modify path as necessary
 X = data.iloc[:, 2:]  # Assuming feature columns start from index 2
 y = data.iloc[:, 1]   # Assuming label column is at index 1
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
