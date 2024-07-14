@@ -1,3 +1,5 @@
+pip install -r requirements.txt
+pip install breast_cancer_data.csv
 import streamlit as st
 import requests
 import pandas as pd
@@ -108,15 +110,7 @@ def predict():
 
         st.subheader('Prediction:')
         result = "Malignant" if prediction[0] == 1 else "Benign"
-
-        if (prediction_proba[0][1]*100.0) == (prediction_proba[0][0]*100.0) :
-            st.write(result)
-        elif (prediction_proba[0][1]*100.0) > (prediction_proba[0][0]*100.0) :
-            result = "Malignant"
-            st.write(result)
-        else:
-            result = "Benign"
-            st.write(result)
+        st.write(result)
 
         st.subheader('Prediction Probability:')
         st.write(f"Malignant: {prediction_proba[0][1]*100:.2f}%")
@@ -174,17 +168,7 @@ def train_own_model():
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=rand_state)
             st.write("Training and Testing datasets are ready.")
 
-            # if st.checkbox("Apply Preprocessing"):
-            #     from sklearn.preprocessing import StandardScaler
-            #     sc = StandardScaler()
-            #     X_train = sc.fit_transform(X_train)
-            #     X_test = sc.transform(X_test)  # Use transform here to prevent data leakage
-
             # Model training and evaluation
-            from sklearn.svm import SVC
-            from sklearn.tree import DecisionTreeRegressor
-            from sklearn.metrics import mean_squared_error
-
             svc = SVC()
             dtr = DecisionTreeRegressor()
             svc.fit(X_train, y_train)
@@ -199,12 +183,12 @@ def train_own_model():
             st.write("The mean squared error (MSE) is a common way to measure the quality of predictions made by a machine learning model.\nA lower MSE generally indicates a better fit between the model's predictions and the actual outcomes.")
             st.write("Here's a general rule of thumb for interpreting\n\t\tMSE: 0.0 - 0.1: Excellent\n\t\t0.1 - 0.3: Good\n\t\t0.3 - 0.5: Acceptablen\n\t\tAbove 0.5: Poor")
 
-            if mean_squared_error(y_test, y_pred_svc) == mean_squared_error(y_test, y_pred_dtr) :
-              st.write("Both are Best Choice...")
-            elif mean_squared_error(y_test, y_pred_svc) > mean_squared_error(y_test, y_pred_dtr) :
-                st.write("The DTR {Decision Tree Regressor} Is Best Chocie For Training Your Model...")
+            if mean_squared_error(y_test, y_pred_svc) == mean_squared_error(y_test, y_pred_dtr):
+                st.write("Both are Best Choice...")
+            elif mean_squared_error(y_test, y_pred_svc) > mean_squared_error(y_test, y_pred_dtr):
+                st.write("The DTR {Decision Tree Regressor} Is Best Choice For Training Your Model...")
             else:
-                st.write("The SVC {Support Vector Classifire} Is Best Chocie To Training Your Model...")
+                st.write("The SVC {Support Vector Classifier} Is Best Choice For Training Your Model...")
 
 def medical_suggestion():
     st.header("Medical Information / Suggestions")
@@ -216,7 +200,7 @@ def fetch_and_display_results(query):
     params = {
         "key": API_KEY,
         "cx": CSE_ID,
-        "q": query + "cancer details"
+        "q": query + " cancer details"
     }
     response = requests.get("https://www.googleapis.com/customsearch/v1", params=params)
     results = response.json()
