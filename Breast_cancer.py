@@ -16,19 +16,18 @@ from sklearn.preprocessing import LabelEncoder
 data = pd.read_csv('breast_cancer_data.csv')  # Ensure the file is in the correct path
 
 # Data Cleaning
-# Check for missing values
-if data.isnull().values.any():
-    data.fillna(data.mean(), inplace=True)
+# Fill missing values for numeric columns only
+numeric_cols = data.select_dtypes(include=['float64', 'int64']).columns
+data[numeric_cols] = data[numeric_cols].fillna(data[numeric_cols].mean())
 
 # Ensure all data is finite
 data = data.replace([float('inf'), float('-inf')], float('nan'))
 data.dropna(inplace=True)
 
-# Check if all features are numeric
-for column in data.columns:
-    if data[column].dtype == 'object':
-        le = LabelEncoder()
-        data[column] = le.fit_transform(data[column])
+# Encode non-numeric columns if necessary
+for column in data.select_dtypes(include=['object']).columns:
+    le = LabelEncoder()
+    data[column] = le.fit_transform(data[column])
 
 X = data.iloc[:, 2:]  # Assuming feature columns start from index 2
 y = data.iloc[:, 1]   # Assuming label column is at index 1
